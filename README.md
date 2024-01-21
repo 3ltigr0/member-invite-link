@@ -5,6 +5,8 @@
 - 현재 최소 기능만 최소 수준으로 구현.
 - 리팩토링 등의 개선 및 기능 추가 예정.
 
+[JAR 다운로드](https://github.com/3ltigr0/member-invite-link/blob/faec1b1b7953985b84ae350bc9bafd8afc0fe122/member-invite-link-0.0.1-SNAPSHOT.jar)
+
 ## API 명세
 
 ### 회원 초대 링크 생성
