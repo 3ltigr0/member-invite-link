@@ -23,22 +23,17 @@ public class MemberService {
 
     @Transactional
     public InviteResponseDto invite(InviteRequestDto inviteRequestDto) {
-        Optional<Member> existingMember = memberRepository.findByEmail(inviteRequestDto.getEmail());
+        validateDuplicateEmail(inviteRequestDto.getEmail());
 
-        if (existingMember.isEmpty()) {
-            Invitation invitation = Invitation.createInvitation();
-            Member member = Member.createTemporaryMember(
-                    inviteRequestDto.getName(),
-                    inviteRequestDto.getEmail(),
-                    inviteRequestDto.getPhoneNumber(),
-                    invitation);
-            memberRepository.save(member);
+        Invitation invitation = Invitation.createInvitation();
+        Member member = Member.createTemporaryMember(
+                inviteRequestDto.getName(),
+                inviteRequestDto.getEmail(),
+                inviteRequestDto.getPhoneNumber(),
+                invitation);
+        memberRepository.save(member);
 
-            return new InviteResponseDto(member.getInvitation().getId().toString());
-        }
-        else {
-            throw new ExistingMemberException();
-        }
+        return new InviteResponseDto(member.getInvitation().getId().toString());
     }
 
     @Transactional
@@ -65,6 +60,12 @@ public class MemberService {
         }
         else {
             throw new InvalidInvitationException();
+        }
+    }
+
+    public void validateDuplicateEmail(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new ExistingMemberException();
         }
     }
 }
