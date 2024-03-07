@@ -1,11 +1,14 @@
 package com.eltigro.memberinvitelink.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter @Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member {
 
     @Id @GeneratedValue
@@ -15,10 +18,16 @@ public class Member {
     private String name;
 
     private String email;
+    
+    private String password;
 
     private String phoneNumber;
 
-    private boolean temporaryMember;
+    @Builder.Default
+    private String role = "ROLE_USER";
+
+    @Builder.Default
+    private boolean temporaryMember = false;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "invitation_id")
@@ -33,6 +42,10 @@ public class Member {
         member.setTemporaryMember(true);
 
         return member;
+    }
+
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
+        password = passwordEncoder.encode(password);
     }
 
     public void acceptInvite(){

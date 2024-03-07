@@ -4,10 +4,12 @@ import com.eltigro.memberinvitelink.domain.Invitation;
 import com.eltigro.memberinvitelink.domain.Member;
 import com.eltigro.memberinvitelink.dto.InviteRequestDto;
 import com.eltigro.memberinvitelink.dto.InviteResponseDto;
+import com.eltigro.memberinvitelink.dto.SignUpRequestDto;
 import com.eltigro.memberinvitelink.exception.ExistingMemberException;
 import com.eltigro.memberinvitelink.exception.InvalidInvitationException;
 import com.eltigro.memberinvitelink.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,18 @@ import java.util.UUID;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public Long signUp(SignUpRequestDto signUpRequestDto) {
+        validateDuplicateEmail(signUpRequestDto.getEmail());
+
+        Member member = signUpRequestDto.toEntity();
+        member.encryptPassword(passwordEncoder);
+        memberRepository.save(member);
+
+        return member.getId();
+    }
 
     @Transactional
     public InviteResponseDto invite(InviteRequestDto inviteRequestDto) {
