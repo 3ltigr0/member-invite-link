@@ -1,4 +1,4 @@
-package com.eltigro.memberinvitelink.api;
+package com.eltigro.memberinvitelink.controller;
 
 
 import com.eltigro.memberinvitelink.dto.InviteRequestDto;
