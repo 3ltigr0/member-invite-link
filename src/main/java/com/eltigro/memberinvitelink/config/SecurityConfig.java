@@ -1,6 +1,8 @@
 package com.eltigro.memberinvitelink.config;
 
 import com.eltigro.memberinvitelink.jwt.JsonUsernamePasswordAuthenticationFilter;
+import com.eltigro.memberinvitelink.jwt.JwtFilter;
+import com.eltigro.memberinvitelink.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +43,8 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAt(new JsonUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JsonUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), JsonUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users", "/api/auth", "/api/accept-invite/**").permitAll()

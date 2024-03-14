@@ -5,6 +5,9 @@ spring:
     password:
     driver-class-name: org.h2.Driver
 
+  jwt:
+    secret-key: "a357185bd59ea861e404bf558903d14e06e939ca102aaeee964e05ef5c10c7c7"
+
   jpa:
     hibernate:
       ddl-auto: create
